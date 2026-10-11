@@ -4,7 +4,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { FUNCTION_NAMES, ROOT, bundleFunction, findUnresolvedImports } from '../scripts/lib.mjs';
+import { FUNCTION_NAMES, NPM_DEPS, ROOT, bundleFunction, findUnresolvedImports, npmSpecifier } from '../scripts/lib.mjs';
 import { FakeDb, installFakeBase44, post } from './helpers/fakeBase44';
 import { installFakeNetwork, page } from './helpers/fakeNetwork';
 
@@ -12,7 +12,7 @@ const STUB = fileURLToPath(new URL('./stubs/base44-sdk.ts', import.meta.url));
 const OUT_DIR = path.join(ROOT, 'build', 'test-bundles');
 
 async function loadBundled(name: string) {
-  const code = await bundleFunction(name, { alias: { 'npm:@base44/sdk@0.8.40': STUB }, external: [] });
+  const code = await bundleFunction(name, { alias: { 'npm:@base44/sdk@0.8.40': STUB }, external: [], npmDeps: false });
   await mkdir(OUT_DIR, { recursive: true });
   const file = path.join(OUT_DIR, `${name}.mjs`);
   await writeFile(file, code);
@@ -37,6 +37,12 @@ describe('production bundles', () => {
     expect(code).toContain("from 'npm:@base44/sdk@0.8.40'".replace(/'/g, '"'));
     expect(code).toMatch(/export\s*\{[^}]*\bas default\b/);
     expect(code).not.toMatch(/from "(zod|node-html-parser|zod-to-json-schema)"/);
+    // Third-party libraries are imported by Deno from npm at pinned versions, not inlined.
+    // synthesizeBenchmarkReport never scrapes, so it does not need the HTML parser.
+    const expected = name === 'synthesizeBenchmarkReport' ? ['zod', 'zod-to-json-schema'] : NPM_DEPS;
+    for (const pkg of expected) expect(code, `${name} imports ${pkg}`).toContain(`"${npmSpecifier(pkg)}"`);
+    if (name === 'synthesizeBenchmarkReport') expect(code).not.toContain('node-html-parser');
+    expect(code.length, `${name} stays small enough to review`).toBeLessThan(120_000);
   });
 
   it('the bundled auditCompanyWebsite runs end to end (scrape -> AI -> entity)', async () => {

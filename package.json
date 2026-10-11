@@ -9,6 +9,7 @@
     "test": "vitest run",
     "build:base44": "node scripts/assemble-base44.mjs",
     "dev:demo": "vite --config dev/vite.config.ts",
+    "test:deno": "node scripts/deno-smoke.mjs",
     "check": "npm run typecheck && npm run test && npm run build:base44"
   },
   "dependencies": {

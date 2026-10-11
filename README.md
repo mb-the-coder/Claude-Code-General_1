@@ -58,8 +58,13 @@ error banner and Retry flow. Sample data is always labelled; components never fa
 5. Push and publish (`base44 dashboard open`, then publish).
 
 The page needs only packages every Base44 app already has (`react`, `@tanstack/react-query`, `lucide-react`, Tailwind).
-The generated `entry.ts` files bundle `zod`, `zod-to-json-schema` and `node-html-parser`; only the platform SDK
-(`npm:@base44/sdk`) stays external. They are ~600 KB unminified (mostly HTML-entity tables).
+Each generated `entry.ts` is a single file of 30-60 KB containing our own code; third-party libraries are imported by Deno
+from npm at pinned versions (`npm:zod@x.y.z`, `npm:node-html-parser@x.y.z`, `npm:zod-to-json-schema@x.y.z`), the same way the
+platform SDK is.
+
+To check the generated files on the real runtime (needs [Deno](https://deno.com) and registry access), run
+`DENO_BIN=/path/to/deno npm run test:deno`. It loads the production bundles and drives audit, discovery and benchmark end to end
+against fakes.
 
 ## How a run works
 
