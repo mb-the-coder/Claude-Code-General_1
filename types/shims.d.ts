@@ -31,7 +31,11 @@ declare module 'npm:@base44/sdk@0.8.40' {
   }
   export interface Base44Client {
     auth: { me(): Promise<{ id: string; email?: string } | null> };
-    entities: Record<string, Base44Entity<any>>;
+    entities: {
+      CompanyProfile: Base44Entity<any>;
+      Competitor: Base44Entity<any>;
+      BenchmarkReport: Base44Entity<any>;
+    };
   }
   export function createClientFromRequest(req: Request): Base44Client;
 }

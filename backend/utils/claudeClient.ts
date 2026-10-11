@@ -149,7 +149,9 @@ async function postMessage(
       } else if (controller.signal.aborted) {
         lastError = new ClaudeError(`Claude did not respond within ${Math.round(o.timeoutMs / 1000)}s.`, 'TIMEOUT', true);
       } else {
-        lastError = new ClaudeError(`Could not reach the Claude API (${(err as Error).message}).`, 'API_ERROR', true);
+        // Deliberately generic: low-level network errors are not useful (or safe) to show users.
+        console.error('[claudeClient] request failed:', err instanceof Error ? err.name : 'unknown');
+        lastError = new ClaudeError('Could not reach the Claude API. Please try again.', 'API_ERROR', true);
       }
     } finally {
       clearTimeout(timer);
