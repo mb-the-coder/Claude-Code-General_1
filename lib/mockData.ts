@@ -1,0 +1,242 @@
+// Sample data for demo mode. All companies are fictional.
+// Components never fall back to this silently: the page opts in explicitly and shows a "sample data" banner.
+
+import type { BenchmarkReport, CompanyProfile, Competitor } from './types';
+
+export const DEMO_PROFILE_ID = 'demo_profile';
+
+export const MOCK_PROFILE: CompanyProfile = {
+  id: DEMO_PROFILE_ID,
+  name: 'Acme Flow',
+  url: 'https://acmeflow.example/',
+  industry: 'B2B SaaS · Workflow automation',
+  description:
+    'Acme Flow is a no-code workflow automation platform that routes approvals, handoffs and reporting between the tools operations teams already use.',
+  target_audience: 'Operations managers and RevOps leads at 50-500 person companies.',
+  value_propositions: [
+    'Stop chasing approvals: requests route to the right person automatically',
+    'No-code builder that ops teams can use without engineering',
+    'Connects the tools you already use in minutes',
+  ],
+  pricing_tiers: [
+    { tierName: 'Starter', price: '$29', billingPeriod: 'month', featuresSummary: '5 workflows, email support' },
+    { tierName: 'Business', price: '$99', billingPeriod: 'month', featuresSummary: 'Unlimited workflows, SSO' },
+    { tierName: 'Enterprise', price: 'Custom', billingPeriod: '', featuresSummary: 'Dedicated support, audit logs' },
+  ],
+  raw_scraped_summary: 'SOURCE: https://acmeflow.example/ (HTTP 200)\nTITLE: Acme Flow | Workflow automation for ops teams',
+  status: 'ANALYZED',
+  last_error: '',
+  created_date: '2026-10-01T09:00:00.000Z',
+  updated_date: '2026-10-01T09:05:00.000Z',
+};
+
+export const MOCK_COMPETITORS: Competitor[] = [
+  {
+    id: 'demo_comp_1',
+    company_profile_id: DEMO_PROFILE_ID,
+    name: 'Streamline',
+    url: 'https://streamline.example/',
+    source: 'AI_DISCOVERED',
+    discovery_rationale: 'Category leader in no-code approvals with a large integration marketplace; competes for the same ops buyers.',
+    threat_level: 'CRITICAL',
+    strengths: ['Largest integration marketplace', 'Strong brand with mid-market ops teams', 'Enterprise-ready security (SSO, SOC 2)'],
+    weaknesses: ['Per-seat pricing gets expensive quickly', 'Steep learning curve for advanced flows'],
+    features: { 'SSO / SAML': true, 'Public API': 'REST + webhooks', 'Audit logs': true, 'Mobile app': true, 'Free plan': false },
+    pricing_summary: 'From $25 per user per month; annual billing discount.',
+    included_in_report: true,
+  },
+  {
+    id: 'demo_comp_2',
+    company_profile_id: DEMO_PROFILE_ID,
+    name: 'Orbit Ops',
+    url: 'https://orbitops.example/',
+    source: 'AI_DISCOVERED',
+    discovery_rationale: 'Fast-growing challenger focused on operations teams with a generous free tier.',
+    threat_level: 'HIGH',
+    strengths: ['Generous free plan drives bottom-up adoption', 'Polished onboarding and templates'],
+    weaknesses: ['Limited enterprise controls', 'Thin reporting'],
+    features: { 'SSO / SAML': false, 'Public API': true, 'Audit logs': false, 'Mobile app': true, 'Free plan': true },
+    pricing_summary: 'Free tier; Pro at $12 per user per month.',
+    included_in_report: true,
+  },
+  {
+    id: 'demo_comp_3',
+    company_profile_id: DEMO_PROFILE_ID,
+    name: 'FlowForge',
+    url: 'https://flowforge.example/',
+    source: 'MANUAL_INPUT',
+    discovery_rationale: 'Added manually.',
+    threat_level: 'MEDIUM',
+    strengths: ['Deep developer tooling and self-hosting option'],
+    weaknesses: ['Not approachable for non-technical teams', 'Sparse documentation'],
+    features: { 'SSO / SAML': true, 'Public API': true, 'Audit logs': true, 'Mobile app': false, 'Free plan': true },
+    pricing_summary: 'Open-core; managed cloud from $49 per month.',
+    included_in_report: true,
+  },
+  {
+    id: 'demo_comp_4',
+    company_profile_id: DEMO_PROFILE_ID,
+    name: 'Cascade HQ',
+    url: 'https://cascadehq.example/',
+    source: 'AI_DISCOVERED',
+    discovery_rationale: 'Adjacent project-management suite whose built-in automations substitute for a dedicated tool.',
+    threat_level: 'LOW',
+    strengths: ['Bundled with a tool teams already pay for'],
+    weaknesses: ['Automation depth is shallow'],
+    features: { 'SSO / SAML': true, 'Public API': true, 'Audit logs': false, 'Mobile app': true, 'Free plan': true },
+    pricing_summary: 'Included in suite plans from $8 per user per month.',
+    included_in_report: false,
+  },
+];
+
+export const MOCK_REPORT: BenchmarkReport = {
+  id: 'demo_report',
+  company_profile_id: DEMO_PROFILE_ID,
+  overall_health_score: 68,
+  market_positioning_score: 78,
+  pricing_competitiveness_score: 54,
+  // Matches what the backend would compute from the matrix below (weighted coverage of competitor-offered features).
+  feature_parity_score: 39,
+  executive_summary:
+    'Acme Flow has a sharp, ops-focused message and a builder that non-engineers can use, which gives it a credible foothold against larger rivals. Its main exposure is enterprise readiness: Streamline and FlowForge both ship SSO and audit logs that Acme Flow gates behind its top plans or lacks entirely, and that is increasingly a procurement checkbox. Pricing is competitive at the entry level but loses ground above the Starter tier, where Orbit Ops undercuts on both price and free access. The biggest opportunity is the mid-market team that has outgrown a free tool but is not ready for Streamline-level cost. First move: make SSO and audit logs available on the Business plan and say so on the pricing page.',
+  swot: {
+    strengths: [
+      'Clear, outcome-led headline ("Stop chasing approvals") that ops buyers recognize',
+      'No-code builder usable without engineering help',
+      'Transparent entry-level pricing with a low-cost Starter tier',
+      'Fast time-to-value through quick tool connections',
+    ],
+    weaknesses: [
+      'SSO and audit logs are restricted to the highest tier or absent',
+      'No free plan, which slows bottom-up adoption',
+      'Integration catalog is smaller than the category leader',
+      'Little public proof (case studies, security documentation) on the site',
+    ],
+    opportunities: [
+      'Mid-market teams outgrowing free tools but priced out of Streamline',
+      'Position as the "approvals-first" alternative to generic automation suites',
+      'Publish security documentation to win procurement reviews faster',
+    ],
+    threats: [
+      'Orbit Ops free tier compresses willingness to pay at the low end',
+      'Streamline can bundle enterprise features at similar price points',
+      'Suite vendors (Cascade HQ) add built-in approvals, shrinking the standalone market',
+    ],
+  },
+  feature_matrix: [
+    { featureName: 'SSO / SAML', targetHas: false, competitors: { Streamline: true, 'Orbit Ops': false, FlowForge: true }, gapImpact: 'HIGH' },
+    { featureName: 'Audit logs', targetHas: false, competitors: { Streamline: true, 'Orbit Ops': false, FlowForge: true }, gapImpact: 'HIGH' },
+    { featureName: 'Mobile app', targetHas: false, competitors: { Streamline: true, 'Orbit Ops': true, FlowForge: false }, gapImpact: 'MED' },
+    { featureName: 'Free plan', targetHas: false, competitors: { Streamline: false, 'Orbit Ops': true, FlowForge: true }, gapImpact: 'MED' },
+    { featureName: 'Approval routing rules', targetHas: true, competitors: { Streamline: true, 'Orbit Ops': true, FlowForge: false }, gapImpact: 'LOW' },
+    { featureName: 'Public API', targetHas: true, competitors: { Streamline: true, 'Orbit Ops': true, FlowForge: true }, gapImpact: 'LOW' },
+    { featureName: 'No-code builder', targetHas: true, competitors: { Streamline: true, 'Orbit Ops': true, FlowForge: false }, gapImpact: 'LOW' },
+    { featureName: 'Template library', targetHas: true, competitors: { Streamline: true, 'Orbit Ops': true, FlowForge: false }, gapImpact: 'LOW' },
+    { featureName: 'Advanced reporting', targetHas: false, competitors: { Streamline: true, 'Orbit Ops': false, FlowForge: false }, gapImpact: 'MED' },
+    { featureName: 'Self-hosting option', targetHas: false, competitors: { Streamline: false, 'Orbit Ops': false, FlowForge: true }, gapImpact: 'LOW' },
+    { featureName: 'Slack / Teams approvals', targetHas: true, competitors: { Streamline: true, 'Orbit Ops': true, FlowForge: false }, gapImpact: 'LOW' },
+    { featureName: 'Role-based permissions', targetHas: true, competitors: { Streamline: true, 'Orbit Ops': false, FlowForge: true }, gapImpact: 'MED' },
+  ],
+  actionable_recommendations: [
+    {
+      priority: 'P0',
+      title: 'Ship SSO and audit logs on the Business plan',
+      category: 'Product',
+      impact: 'Removes the most common enterprise procurement blocker and neutralizes the strongest Streamline advantage.',
+      effort: 'MED',
+      tacticalSteps: [
+        'Scope SAML and SCIM requirements with two current Business-tier customers',
+        'Build SAML SSO and an exportable audit log behind a feature flag',
+        'Move both features from Enterprise to Business in the plan matrix',
+        'Update the pricing page and add a security section describing both',
+      ],
+    },
+    {
+      priority: 'P0',
+      title: 'Add a limited free tier for single-team use',
+      category: 'Pricing',
+      impact: 'Counters the Orbit Ops bottom-up motion and creates an upgrade path into paid plans.',
+      effort: 'MED',
+      tacticalSteps: [
+        'Define free-tier limits (one team, three workflows) that still demonstrate core value',
+        'Instrument activation events to find the upgrade trigger',
+        'Launch with an in-app upgrade prompt at the workflow limit',
+      ],
+    },
+    {
+      priority: 'P0',
+      title: 'Publish a security and compliance page',
+      category: 'Trust',
+      impact: 'Shortens security reviews and lifts conversion for mid-market buyers.',
+      effort: 'LOW',
+      tacticalSteps: [
+        'Collect current certifications, subprocessors and encryption details',
+        'Publish a public trust page and link it from the footer and pricing page',
+        'Create a downloadable security questionnaire pack for sales',
+      ],
+    },
+    {
+      priority: 'P1',
+      title: 'Build a mobile approvals experience',
+      category: 'Product',
+      impact: 'Closes a visible gap versus Streamline and Orbit Ops for approvers who are away from a desk.',
+      effort: 'HIGH',
+      tacticalSteps: [
+        'Ship push notifications with one-tap approve and reject',
+        'Evaluate a responsive web approver view before a native app',
+        'Measure approval turnaround time before and after launch',
+      ],
+    },
+    {
+      priority: 'P1',
+      title: 'Add three customer case studies with measurable results',
+      category: 'Messaging',
+      impact: 'Replaces unsupported claims with proof and strengthens the outcome-led positioning.',
+      effort: 'LOW',
+      tacticalSteps: [
+        'Interview three Business-tier customers about before/after approval cycle times',
+        'Publish each as a one-page case study with the customer logo',
+        'Feature the strongest result in the homepage hero area',
+      ],
+    },
+    {
+      priority: 'P1',
+      title: 'Improve reporting for ops leaders',
+      category: 'Product',
+      impact: 'Addresses the advanced-reporting gap that Streamline uses to win larger accounts.',
+      effort: 'MED',
+      tacticalSteps: [
+        'Interview five ops leaders about the reports they build manually today',
+        'Ship a cycle-time and bottleneck dashboard',
+        'Offer scheduled report emails as a Business-plan feature',
+      ],
+    },
+    {
+      priority: 'P2',
+      title: 'Expand the integration catalog for the top ten requested tools',
+      category: 'Growth',
+      impact: 'Narrows the marketplace gap over time and removes a common objection.',
+      effort: 'HIGH',
+      tacticalSteps: [
+        'Rank requested integrations from support tickets and sales notes',
+        'Publish a public integration roadmap',
+        'Open a partner program for community-built connectors',
+      ],
+    },
+    {
+      priority: 'P2',
+      title: 'Create comparison pages against the top three rivals',
+      category: 'Messaging',
+      impact: 'Captures high-intent search traffic from buyers who are actively evaluating alternatives.',
+      effort: 'LOW',
+      tacticalSteps: [
+        'Draft factual feature and pricing comparison pages for each rival',
+        'Review claims with legal and keep them dated and sourced',
+        'Add the pages to the site navigation under Compare',
+      ],
+    },
+  ],
+  last_analyzed_at: '2026-10-01T09:05:00.000Z',
+  created_date: '2026-10-01T09:05:00.000Z',
+  updated_date: '2026-10-01T09:05:00.000Z',
+};

@@ -1,5 +1,19 @@
 import { describe, expect, it } from 'vitest';
-import { hostKey, isValidWebsiteUrl, nameFromUrl, normalizeUrl } from '../lib/url';
+import { hostKey, isValidWebsiteUrl, nameFromUrl, normalizeUrl, safeHref } from '../lib/url';
+
+describe('safeHref', () => {
+  it('passes http(s) URLs and neutralizes everything else', () => {
+    expect(safeHref('https://acme.com/x?y=1')).toBe('https://acme.com/x?y=1');
+    expect(safeHref('http://acme.com')).toBe('http://acme.com/');
+    expect(safeHref('javascript:alert(1)')).toBe('#');
+    expect(safeHref('JaVaScRiPt:alert(1)')).toBe('#');
+    expect(safeHref('data:text/html,<script>alert(1)</script>')).toBe('#');
+    expect(safeHref('//evil.com')).toBe('#');
+    expect(safeHref('not a url')).toBe('#');
+    expect(safeHref(undefined)).toBe('#');
+    expect(safeHref('')).toBe('#');
+  });
+});
 
 describe('normalizeUrl', () => {
   it('adds https and strips the hash', () => {

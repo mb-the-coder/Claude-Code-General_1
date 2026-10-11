@@ -165,6 +165,39 @@ export interface PipelineState {
   /** Step that failed, so Retry can resume from it instead of starting over. */
   failedStep?: PipelineStepId;
   profileId?: string;
+  /** Non-fatal notes from the scrape (e.g. THIN_CONTENT), shown once the run finishes. */
+  warnings?: string[];
+}
+
+/**
+ * Everything the OmniCompetitor page needs. Two implementations satisfy it:
+ * useLiveController (Base44 entities + backend functions) and useDemoController (in-memory sample data).
+ */
+export interface OmniController {
+  profiles: CompanyProfile[];
+  profilesLoading: boolean;
+  profile?: CompanyProfile;
+  competitors: Competitor[];
+  competitorsLoading: boolean;
+  report?: BenchmarkReport;
+  reportLoading: boolean;
+  pipeline: PipelineState;
+  /** True while any action (pipeline, add / remove / toggle, regenerate) is running. */
+  busy: boolean;
+  /** True while a report is being (re)generated outside the main pipeline. */
+  regenerating: boolean;
+  /** Last failed action, as a user-facing message. */
+  actionError?: string;
+  /** Entities could not be loaded at all. */
+  loadError?: string;
+  selectProfile(id: string | undefined): void;
+  runAudit(input: AuditCompanyWebsiteInput): void;
+  retryPipeline(): void;
+  resetPipeline(): void;
+  addManualCompetitor(input: ManualCompetitorInput): Promise<void>;
+  toggleCompetitor(id: string, included: boolean): void;
+  removeCompetitor(id: string): void;
+  regenerateReport(): void;
 }
 
 export const PIPELINE_STEPS: ReadonlyArray<{ id: PipelineStepId; label: string; hint: string }> = [

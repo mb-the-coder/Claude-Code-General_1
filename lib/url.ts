@@ -44,6 +44,20 @@ export function isValidWebsiteUrl(raw: string): boolean {
   }
 }
 
+/**
+ * Safe value for an <a href>: returns the URL only if it is http(s), otherwise "#".
+ * Entity rows can be written directly through the SDK, so never trust a stored URL to be a web address.
+ */
+export function safeHref(raw: string | undefined | null): string {
+  if (!raw) return '#';
+  try {
+    const u = new URL(raw);
+    return u.protocol === 'http:' || u.protocol === 'https:' ? u.toString() : '#';
+  } catch {
+    return '#';
+  }
+}
+
 /** Lowercased hostname without a leading "www." — the identity of a company for dedupe/upsert. */
 export function hostKey(rawUrl: string): string {
   try {
