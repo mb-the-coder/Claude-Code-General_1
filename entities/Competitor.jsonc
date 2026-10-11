@@ -1,0 +1,61 @@
+{
+  // A competitor of a CompanyProfile, either discovered by AI or added manually.
+  "name": "Competitor",
+  "type": "object",
+  "properties": {
+    "company_profile_id": {
+      "type": "string",
+      "description": "Relation: id of the owning CompanyProfile"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "maxLength": 2048
+    },
+    "source": {
+      "type": "string",
+      "enum": ["AI_DISCOVERED", "MANUAL_INPUT"]
+    },
+    "discovery_rationale": {
+      "type": "string",
+      "description": "Why this company competes with the target (positioning rationale)"
+    },
+    "threat_level": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+    },
+    "strengths": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "weaknesses": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "features": {
+      "type": "object",
+      "description": "Key-value map of feature name -> offering description (or true/false)",
+      "additionalProperties": true
+    },
+    "pricing_summary": {
+      "type": "string"
+    },
+    "included_in_report": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false the competitor is excluded from the next benchmark report"
+    }
+  },
+  "required": ["company_profile_id", "name", "url"],
+  "rls": {
+    "read": { "created_by_id": "{{user.id}}" },
+    "create": { "created_by_id": "{{user.id}}" },
+    "update": { "created_by_id": "{{user.id}}" },
+    "delete": { "created_by_id": "{{user.id}}" }
+  }
+}

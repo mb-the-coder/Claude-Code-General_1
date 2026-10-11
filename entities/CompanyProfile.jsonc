@@ -1,0 +1,73 @@
+{
+  // The company being audited. One record per audited website, owned by the user who created it.
+  // status lifecycle: SCRAPING (any pipeline stage running) -> IDLE (scraped / competitors ready)
+  //                   -> ANALYZED (benchmark report saved) | ERROR (last run failed, see last_error)
+  "name": "CompanyProfile",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Company display name"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "maxLength": 2048,
+      "description": "Normalized public website URL (http/https)"
+    },
+    "industry": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "Industry or market category"
+    },
+    "description": {
+      "type": "string",
+      "description": "What the company does, in 1-3 sentences"
+    },
+    "target_audience": {
+      "type": "string",
+      "description": "Who the company sells to"
+    },
+    "value_propositions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Core value propositions as stated on the site"
+    },
+    "pricing_tiers": {
+      "type": "array",
+      "description": "Pricing tiers found on the site",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tierName": { "type": "string" },
+          "price": { "type": "string", "description": "e.g. \"$29\", \"Free\", \"Custom\"" },
+          "billingPeriod": { "type": "string", "description": "e.g. \"month\", \"year\", \"one-time\"" },
+          "featuresSummary": { "type": "string" }
+        },
+        "required": ["tierName"]
+      }
+    },
+    "raw_scraped_summary": {
+      "type": "string",
+      "description": "Sanitized extract of metadata, headings, navigation, CTAs, pricing signals and body text"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["IDLE", "SCRAPING", "ANALYZED", "ERROR"],
+      "default": "IDLE"
+    },
+    "last_error": {
+      "type": "string",
+      "description": "Human-readable reason for the most recent failure (empty when status is not ERROR)"
+    }
+  },
+  "required": ["name", "url"],
+  "rls": {
+    "read": { "created_by_id": "{{user.id}}" },
+    "create": { "created_by_id": "{{user.id}}" },
+    "update": { "created_by_id": "{{user.id}}" },
+    "delete": { "created_by_id": "{{user.id}}" }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  // The latest benchmark report for a CompanyProfile (updated in place on each run).
+  "name": "BenchmarkReport",
+  "type": "object",
+  "properties": {
+    "company_profile_id": {
+      "type": "string",
+      "description": "Relation: id of the owning CompanyProfile"
+    },
+    "overall_health_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "market_positioning_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "pricing_competitiveness_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "feature_parity_score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "swot": {
+      "type": "object",
+      "properties": {
+        "strengths": { "type": "array", "items": { "type": "string" } },
+        "weaknesses": { "type": "array", "items": { "type": "string" } },
+        "opportunities": { "type": "array", "items": { "type": "string" } },
+        "threats": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["strengths", "weaknesses", "opportunities", "threats"]
+    },
+    "feature_matrix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "featureName": { "type": "string" },
+          "targetHas": { "type": "boolean" },
+          "competitors": {
+            "type": "object",
+            "description": "competitor name -> has the feature",
+            "additionalProperties": { "type": "boolean" }
+          },
+          "gapImpact": { "type": "string", "enum": ["HIGH", "MED", "LOW"] }
+        },
+        "required": ["featureName", "targetHas", "competitors", "gapImpact"]
+      }
+    },
+    "actionable_recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "priority": { "type": "string", "enum": ["P0", "P1", "P2"] },
+          "title": { "type": "string" },
+          "category": { "type": "string" },
+          "impact": { "type": "string" },
+          "effort": { "type": "string", "enum": ["LOW", "MED", "HIGH"] },
+          "tacticalSteps": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["priority", "title", "category", "impact", "effort", "tacticalSteps"]
+      }
+    },
+    "executive_summary": { "type": "string" },
+    "last_analyzed_at": { "type": "string", "format": "date-time" }
+  },
+  "required": ["company_profile_id"],
+  "rls": {
+    "read": { "created_by_id": "{{user.id}}" },
+    "create": { "created_by_id": "{{user.id}}" },
+    "update": { "created_by_id": "{{user.id}}" },
+    "delete": { "created_by_id": "{{user.id}}" }
+  }
+}
