@@ -7,3 +7,4 @@ export function bundleFunction(
   options?: { alias?: Record<string, string>; external?: string[]; minify?: boolean },
 ): Promise<string>;
 export function findUnresolvedImports(code: string): string[];
+export function frontendImportGraph(entry?: string, options?: { root?: string }): Promise<string[]>;

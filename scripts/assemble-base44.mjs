@@ -10,7 +10,7 @@
 
 import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { ENTITY_NAMES, FRONTEND_FILES, FUNCTION_NAMES, ROOT, bundleFunction, findUnresolvedImports } from './lib.mjs';
+import { ENTITY_NAMES, FRONTEND_FILES, FUNCTION_NAMES, ROOT, bundleFunction, findUnresolvedImports, frontendImportGraph } from './lib.mjs';
 
 const OUT = path.join(ROOT, 'build', 'base44-bundle');
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
@@ -42,6 +42,11 @@ for (const name of FUNCTION_NAMES) {
 }
 
 // 3. Frontend ----------------------------------------------------------------------------------
+// Fail the build if the page imports anything we are not shipping (or anything from backend/ or lib/ai).
+const graph = await frontendImportGraph();
+const missing = graph.filter((f) => !FRONTEND_FILES.includes(f));
+if (missing.length > 0) throw new Error(`The page imports files that are not in FRONTEND_FILES: ${missing.join(', ')}`);
+
 for (const rel of FRONTEND_FILES) {
   const dest = path.join(OUT, 'src', 'omnicompetitor', rel);
   await mkdir(path.dirname(dest), { recursive: true });

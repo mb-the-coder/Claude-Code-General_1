@@ -16,11 +16,13 @@ export const FRONTEND_FILES = [
   'components/FeatureMatrixTable.tsx',
   'components/SwotGrid.tsx',
   'components/MetricCard.tsx',
+  'components/Modal.tsx',
   'pages/OmniCompetitor.tsx',
   'lib/types.ts',
   'lib/url.ts',
   'lib/api.ts',
   'lib/hooks.ts',
+  'lib/demoController.ts',
   'lib/mockData.ts',
   'lib/export.ts',
 ];
@@ -50,6 +52,29 @@ export async function bundleFunction(name, { alias = {}, external = ['npm:*'], m
     },
   });
   return result.outputFiles[0].text;
+}
+
+/**
+ * Walks the import graph of the page entry and returns every local source file it pulls in
+ * (paths relative to the repo root). Used to prove FRONTEND_FILES is complete and backend-free.
+ */
+export async function frontendImportGraph(entry = 'pages/OmniCompetitor.tsx', { root = ROOT } = {}) {
+  const result = await build({
+    entryPoints: [path.join(root, entry)],
+    bundle: true,
+    write: false,
+    metafile: true,
+    format: 'esm',
+    platform: 'browser',
+    jsx: 'automatic',
+    logLevel: 'silent',
+    // Provided by the host Base44 app / npm, not part of our source tree.
+    external: ['react', 'react/*', 'react-dom', 'react-dom/*', '@tanstack/react-query', 'lucide-react', '@/api/base44Client'],
+  });
+  return Object.keys(result.metafile.inputs)
+    .filter((p) => !p.includes('node_modules'))
+    .map((p) => path.relative(root, path.resolve(root, p)).split(path.sep).join('/'))
+    .sort();
 }
 
 /** Returns import specifiers in the bundle that the Deno runtime could not resolve. */
