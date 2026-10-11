@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { BarChart3, FlaskConical, LayoutDashboard, Search, Users } from 'lucide-react';
+import { BarChart3, FlaskConical, LayoutDashboard, LogOut, Search, Users } from 'lucide-react';
 import { AuditWorkspace } from '../components/AuditWorkspace';
 import { CompetitorManager } from '../components/CompetitorManager';
 import { ExecutiveDashboard } from '../components/ExecutiveDashboard';
@@ -30,7 +30,7 @@ function EmptyState({ title, body, action }: { title: string; body: string; acti
   );
 }
 
-function Shell({ c, demo, onToggleDemo }: { c: OmniController; demo: boolean; onToggleDemo: () => void }) {
+function Shell({ c, demo, onToggleDemo, onSignOut }: { c: OmniController; demo: boolean; onToggleDemo: () => void; onSignOut?: () => void }) {
   const [tab, setTab] = useState<Tab>(c.report ? 'dashboard' : 'audit');
 
   // When a pipeline run finishes, take the user straight to the result.
@@ -82,6 +82,7 @@ function Shell({ c, demo, onToggleDemo }: { c: OmniController; demo: boolean; on
             })}
           </nav>
 
+          <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={onToggleDemo}
@@ -93,6 +94,17 @@ function Shell({ c, demo, onToggleDemo }: { c: OmniController; demo: boolean; on
             <FlaskConical className="h-4 w-4" aria-hidden="true" />
             {demo ? 'Exit sample data' : 'Try sample data'}
           </button>
+          {onSignOut && (
+            <button
+              type="button"
+              onClick={onSignOut}
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            >
+              <LogOut className="h-4 w-4" aria-hidden="true" />
+              Sign out
+            </button>
+          )}
+          </div>
         </div>
         {demo && (
           <p role="status" className="border-t border-amber-200 bg-amber-50 px-4 py-1.5 text-center text-xs text-amber-900">
@@ -171,21 +183,25 @@ function Shell({ c, demo, onToggleDemo }: { c: OmniController; demo: boolean; on
   );
 }
 
-function DemoPage({ onToggleDemo }: { onToggleDemo: () => void }) {
+function DemoPage({ onToggleDemo, onSignOut }: { onToggleDemo: () => void; onSignOut?: () => void }) {
   const controller = useDemoController();
-  return <Shell c={controller} demo onToggleDemo={onToggleDemo} />;
+  return <Shell c={controller} demo onToggleDemo={onToggleDemo} onSignOut={onSignOut} />;
 }
 
-function LivePage({ onToggleDemo }: { onToggleDemo: () => void }) {
+function LivePage({ onToggleDemo, onSignOut }: { onToggleDemo: () => void; onSignOut?: () => void }) {
   const controller = useLiveController();
-  return <Shell c={controller} demo={false} onToggleDemo={onToggleDemo} />;
+  return <Shell c={controller} demo={false} onToggleDemo={onToggleDemo} onSignOut={onSignOut} />;
 }
 
 /**
  * OmniCompetitor page. Live mode talks to the Base44 entities and backend functions;
  * "Try sample data" switches to an in-memory demo so the UI can be explored with no backend.
  */
-export default function OmniCompetitorPage({ initialDemo = false }: { initialDemo?: boolean }) {
+export default function OmniCompetitorPage({ initialDemo = false, onSignOut }: { initialDemo?: boolean; onSignOut?: () => void }) {
   const [demo, setDemo] = useState(initialDemo);
-  return demo ? <DemoPage key="demo" onToggleDemo={() => setDemo(false)} /> : <LivePage key="live" onToggleDemo={() => setDemo(true)} />;
+  return demo ? (
+    <DemoPage key="demo" onToggleDemo={() => setDemo(false)} onSignOut={onSignOut} />
+  ) : (
+    <LivePage key="live" onToggleDemo={() => setDemo(true)} onSignOut={onSignOut} />
+  );
 }
