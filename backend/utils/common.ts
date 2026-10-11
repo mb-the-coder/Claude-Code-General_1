@@ -4,7 +4,7 @@
 import { createClientFromRequest, type Base44Client } from 'npm:@base44/sdk@0.8.40';
 import { z } from 'zod';
 import { ClaudeError } from './claudeClient';
-import { ScrapeError } from './scraper';
+import { ScrapeError } from './errors';
 import type { CompanyProfile, CompanyStatus } from '../../lib/types';
 
 export class HttpError extends Error {

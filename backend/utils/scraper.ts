@@ -12,34 +12,9 @@
 // (rebinding); the function sandbox should additionally have no access to internal networks.
 
 import { parse, type HTMLElement } from 'node-html-parser';
+import { ScrapeError, type ScrapeErrorCode } from './errors';
 
-// ---------------------------------------------------------------------------
-// Errors
-// ---------------------------------------------------------------------------
-
-export type ScrapeErrorCode =
-  | 'INVALID_URL'
-  | 'BLOCKED_HOST'
-  | 'DNS_FAILURE'
-  | 'TIMEOUT'
-  | 'NETWORK'
-  | 'HTTP_ERROR'
-  | 'BLOCKED_BY_SITE'
-  | 'NOT_HTML'
-  | 'TOO_MANY_REDIRECTS'
-  | 'EMPTY_CONTENT';
-
-export class ScrapeError extends Error {
-  constructor(
-    message: string,
-    readonly code: ScrapeErrorCode,
-    readonly retryable: boolean,
-    readonly status?: number,
-  ) {
-    super(message);
-    this.name = 'ScrapeError';
-  }
-}
+export { ScrapeError, type ScrapeErrorCode };
 
 // ---------------------------------------------------------------------------
 // SSRF guard
